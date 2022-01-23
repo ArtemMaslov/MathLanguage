@@ -1,0 +1,112 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Logs">
+      <UniqueIdentifier>{97d2d8ca-733b-45a1-8541-181ae1763e9f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Math">
+      <UniqueIdentifier>{2c13b70f-68cb-4b65-999b-a359bebc9664}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Math\MathExpression">
+      <UniqueIdentifier>{1b2dcf5f-dabf-43cc-b49d-ab971fcfb348}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Math\MathParser">
+      <UniqueIdentifier>{097860fd-bf01-402c-8aec-552db3f90e49}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Math\MathTree">
+      <UniqueIdentifier>{be622211-5363-4184-b2e5-9c250ac859af}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Parser">
+      <UniqueIdentifier>{98cbec5a-b918-496d-8ced-6a4aaab96c53}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Compiler">
+      <UniqueIdentifier>{202e7916-53eb-4e7b-b6ee-ae46bee048bc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="StackLibrary">
+      <UniqueIdentifier>{5d5abfa1-9f90-4dbb-bd85-7e216f14d48d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="StringLibrary">
+      <UniqueIdentifier>{a62bde02-f387-4636-a756-fbffd5600dc2}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\StringLibrary\StringLibrary.cpp">
+      <Filter>StringLibrary</Filter>
+    </ClCompile>
+    <ClCompile Include="..\StackLibrary\StackDiagnostic.cpp">
+      <Filter>StackLibrary</Filter>
+    </ClCompile>
+    <ClCompile Include="..\StackLibrary\StackLite.cpp">
+      <Filter>StackLibrary</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Math\MathExpression\MathExpression.cpp">
+      <Filter>Math\MathExpression</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Math\MathParser\Lexer.cpp">
+      <Filter>Math\MathParser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Math\MathParser\MathParser.cpp">
+      <Filter>Math\MathParser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Math\MathParser\RecursiveParser.cpp">
+      <Filter>Math\MathParser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Math\MathTree\MathTree.cpp">
+      <Filter>Math\MathTree</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Logs\Logs.cpp">
+      <Filter>Logs</Filter>
+    </ClCompile>
+    <ClCompile Include="..\MParser\MParser.cpp">
+      <Filter>Parser</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\StringLibrary\StringLibrary.h">
+      <Filter>StringLibrary</Filter>
+    </ClInclude>
+    <ClInclude Include="..\StackLibrary\StackDiagnostic.h">
+      <Filter>StackLibrary</Filter>
+    </ClInclude>
+    <ClInclude Include="..\StackLibrary\StackLite.h">
+      <Filter>StackLibrary</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Math\MathExpression\MathExpression.h">
+      <Filter>Math\MathExpression</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Math\MathExpression\UndefMathDSL.h">
+      <Filter>Math\MathExpression</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Math\MathParser\Lexer.h">
+      <Filter>Math\MathParser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Math\MathParser\MathParser.h">
+      <Filter>Math\MathParser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Math\MathTree\MathTree.h">
+      <Filter>Math\MathTree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Logs\Logs.h">
+      <Filter>Logs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\MParser\MParser.h">
+      <Filter>Parser</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Math\MathExpression\MathDSL.inc">
+      <Filter>Math\MathExpression</Filter>
+    </None>
+  </ItemGroup>
+</Project>
