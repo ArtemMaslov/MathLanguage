@@ -1,1 +1,8 @@
-﻿  MathLanguage.vcxproj -> D:\Язык C\MathLanguage\Debug\MathLanguage.exe
+﻿  LanguageGrammar.cpp
+  main.cpp
+  LanguageTree.cpp
+  Tree.cpp
+  Lexer.cpp
+  UnitTests.cpp
+  Generating Code...
+  MathLanguage.vcxproj -> D:\Язык C\MathLanguage\Debug\MathLanguage.exe

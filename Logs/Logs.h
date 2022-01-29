@@ -29,8 +29,8 @@ const char LogLevelMessages[][8] =
 const size_t LogFileMaxSigSize = 4;
 
 /**
- * @brief Сигнатура файла позволяет определить, в какой файл будут записано сообщение.
- *        Значением является индекс в массиве файлов, поэтому 0 <= индекс < LogFilesSize
+ * @brief РЎРёРіРЅР°С‚СѓСЂР° С„Р°Р№Р»Р° РїРѕР·РІРѕР»СЏРµС‚ РѕРїСЂРµРґРµР»РёС‚СЊ, РІ РєР°РєРѕР№ С„Р°Р№Р» Р±СѓРґСѓС‚ Р·Р°РїРёСЃР°РЅРѕ СЃРѕРѕР±С‰РµРЅРёРµ.
+ *        Р—РЅР°С‡РµРЅРёРµРј СЏРІР»СЏРµС‚СЃСЏ РёРЅРґРµРєСЃ РІ РјР°СЃСЃРёРІРµ С„Р°Р№Р»РѕРІ, РїРѕСЌС‚РѕРјСѓ 0 <= РёРЅРґРµРєСЃ < LogFilesSize
 */
 enum LogSignature
 {
@@ -45,7 +45,7 @@ enum LogSignature
 #define LOG_CALC_ERR(message)                                                       \
     LogLine(message, LOG_LVL_ERROR, LOG_SIG_CALCULATOR, true)
 
-#define LOG_MATH_TREE_ERR(message)                                                  \
+#define LOG_TREE_ERR(message)                                                  \
     LogLine(message, LOG_LVL_ERROR, LOG_SIG_MATH_TREE,  true)
 
 #define LOG_STACK_ERR(message)                                                      \
@@ -53,18 +53,18 @@ enum LogSignature
 
 
 #define LOG_CALC_ERR_MEMORY                                                         \
-    LOG_CALC_ERR("Ошибка выделения памяти")
+    LOG_CALC_ERR("РћС€РёР±РєР° РІС‹РґРµР»РµРЅРёСЏ РїР°РјСЏС‚Рё")
 
-#define LOG_MATH_TREE_ERR_MEMORY                                                    \
-    LOG_MATH_TREE_ERR("Ошибка выделения памяти")
+#define LOG_TREE_ERR_MEMORY                                                    \
+    LOG_TREE_ERR("РћС€РёР±РєР° РІС‹РґРµР»РµРЅРёСЏ РїР°РјСЏС‚Рё")
 
 #define LOG_STACK_ERR_MEMORY                                                        \
-    LOG_STACK_ERR("Ошибка выделения памяти")
+    LOG_STACK_ERR("РћС€РёР±РєР° РІС‹РґРµР»РµРЅРёСЏ РїР°РјСЏС‚Рё")
 
 #define LOG_CALC_DBG(message)                                                       \
     LogLine(message, LOG_LVL_DEBUG, LOG_SIG_CALCULATOR, false)
 
-#define LOG_MATH_TREE_DBG(message)                                                  \
+#define LOG_TREE_DBG(message)                                                  \
     LogLine(message, LOG_LVL_DEBUG, LOG_SIG_MATH_TREE,  false)
 
 #define LOG_STACK_DBG(message)                                                      \
@@ -74,18 +74,18 @@ enum LogSignature
 int LogsConstructor();
 
 /**
- * @brief      Закрывает файл логов.
+ * @brief      Р—Р°РєСЂС‹РІР°РµС‚ С„Р°Р№Р» Р»РѕРіРѕРІ.
 */
 void LogsDestructor();
 
 /**
- * @brief Внутренняя функция. Используйте LogLine взамен.
+ * @brief Р’РЅСѓС‚СЂРµРЅРЅСЏСЏ С„СѓРЅРєС†РёСЏ. РСЃРїРѕР»СЊР·СѓР№С‚Рµ LogLine РІР·Р°РјРµРЅ.
 */
 void $LogLine__(const char* message, LogLevel logLevel, const LogSignature sig, bool dublicateToConsole,
                 const char* funcName, const char* fileName, int logLine);
 
 /**
- * @brief Внутренняя функция. Используйте LogFLine взамен.
+ * @brief Р’РЅСѓС‚СЂРµРЅРЅСЏСЏ С„СѓРЅРєС†РёСЏ. РСЃРїРѕР»СЊР·СѓР№С‚Рµ LogFLine РІР·Р°РјРµРЅ.
 */
 void $LogFLine__(LogLevel logLevel, const LogSignature sig, bool dublicateToConsole,
                 const char* funcName, const char* fileName, int logLine, const char* format, ...);

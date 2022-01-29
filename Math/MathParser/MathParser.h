@@ -5,7 +5,6 @@
 #include "..\MathExpression\MathExpression.h"
 #include "..\MathTree\MathTree.h"
 #include "..\..\StringLibrary\StringLibrary.h"
-#include "..\..\MParser\MParser.h"
 
 
 enum MathParserError
@@ -16,9 +15,9 @@ enum MathParserError
 };
 
 
-bool ReadTreeFromFile(MathTree* tree, FILE* file);
+bool ReadTreeFromFile(Tree* tree, FILE* file);
 
-void WriteTreeToFile(MathTree* problem, FILE* file);
+void WriteTreeToFile(Tree* problem, FILE* file);
 
 
 #endif

@@ -13,7 +13,7 @@
 
 struct MathParser
 {
-    MathNode*       nodes;
+    TreeNode*       nodes;
     size_t          nodeIndex;
     size_t          nodesSize;
 
@@ -23,26 +23,26 @@ struct MathParser
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\\
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\\
 
-static void WriteTreeNodeToFile(MathNode* node, FILE* file, size_t recursiveLength);
+static void WriteTreeNodeToFile(TreeNode* node, FILE* file, size_t recursiveLength);
 
-static MathParserError ParseMathTree(const Text* text, MathTree* tree);
+static MathParserError ParseMathTree(const Text* text, Tree* tree);
 
-static MathNode* ParseParenthesis(MathParser* parser);
+static TreeNode* ParseParenthesis(MathParser* parser);
 
-static MathNode* ParseAddSubOperations(MathParser* parser);
+static TreeNode* ParseAddSubOperations(MathParser* parser);
 
-static MathNode* ParseMulDivOperations(MathParser* parser);
+static TreeNode* ParseMulDivOperations(MathParser* parser);
 
-static MathNode* ParsePowerOperation(MathParser* parser);
+static TreeNode* ParsePowerOperation(MathParser* parser);
 
-static MathNode* ParseUnaryMinus(MathParser* parser);
+static TreeNode* ParseUnaryMinus(MathParser* parser);
 
-static MathNode* ParseFunction(MathParser* parser);
+static TreeNode* ParseFunction(MathParser* parser);
 
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\\
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\\
 
-void WriteTreeToFile(MathTree* problem, FILE* file)
+void WriteTreeToFile(Tree* problem, FILE* file)
 {
     assert(problem);
     assert(file);
@@ -51,7 +51,7 @@ void WriteTreeToFile(MathTree* problem, FILE* file)
         WriteTreeNodeToFile(problem->root, file, 0);
 }
 
-bool ReadTreeFromFile(MathTree* tree, FILE* file)
+bool ReadTreeFromFile(Tree* tree, FILE* file)
 {
     assert(tree);
     assert(file);
@@ -71,22 +71,22 @@ bool ReadTreeFromFile(MathTree* tree, FILE* file)
     return true;
 }
 
-static void WriteTreeNodeToFile(MathNode* node, FILE* file, size_t recursiveLength)
+static void WriteTreeNodeToFile(TreeNode* node, FILE* file, size_t recursiveLength)
 {
     assert(node);
     assert(file);
 
     fprintf(file, "%*s(\n", recursiveLength * 4, "");
     
-    if (node->nodeLeft && node->nodeLeft->expression.type != ME_UNKNOWN)
-        WriteTreeNodeToFile(node->nodeLeft, file, recursiveLength + 1);
+    if (node->NodeLeft && node->NodeLeft->expression.type != ME_UNKNOWN)
+        WriteTreeNodeToFile(node->NodeLeft, file, recursiveLength + 1);
 
     fprintf(file, "%*s", (recursiveLength + 1) * 4, "");
     PrintMathExpression(&node->expression, file);
     fputc('\n', file);
 
-    if (node->nodeRight && node->nodeRight->expression.type != ME_UNKNOWN)
-        WriteTreeNodeToFile(node->nodeRight, file, recursiveLength + 1);
+    if (node->NodeRight && node->NodeRight->expression.type != ME_UNKNOWN)
+        WriteTreeNodeToFile(node->NodeRight, file, recursiveLength + 1);
     
     fprintf(file, "%*s)\n", recursiveLength * 4, "");
 }
@@ -95,7 +95,7 @@ static void WriteTreeNodeToFile(MathNode* node, FILE* file, size_t recursiveLeng
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\\
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\\
 
-static MathParserError ParseMathTree(const Text* text, MathTree* tree)
+static MathParserError ParseMathTree(const Text* text, Tree* tree)
 {
     assert(text);
     assert(tree);
@@ -106,30 +106,30 @@ static MathParserError ParseMathTree(const Text* text, MathTree* tree)
     MathLexerConstructor(&lexer, text);
 
     tree->allocatedSeparately = false;
-    parser.nodes     = tree->nodesArrayPtr       = (MathNode*)calloc(lexer.tokenIndex, sizeof(MathNode));
+    parser.nodes     = tree->nodesArrayPtr       = (TreeNode*)calloc(lexer.tokenIndex, sizeof(TreeNode));
     parser.nodesSize = tree->nodesArraySize      = lexer.tokenIndex;
     parser.status    = MP_NO_ERRORS;
 
     if (!parser.nodes)
     {
-        LOG_MATH_TREE_ERR("Ошибка выделения памяти");
+        LOG_TREE_ERR("РћС€РёР±РєР° РІС‹РґРµР»РµРЅРёСЏ РїР°РјСЏС‚Рё");
         return MP_ERR_MEMORY;
     }
 
     for (size_t st = 0; st < lexer.tokenIndex; st++)
     {
-        tree->nodesArrayPtr[st].childCount = 0;
+        tree->nodesArrayPtr[st].ChildCount = 0;
 
-        tree->nodesArrayPtr[st].nodeLeft   = nullptr;
-        tree->nodesArrayPtr[st].nodeRight  = nullptr;
-        tree->nodesArrayPtr[st].parent     = nullptr;
+        tree->nodesArrayPtr[st].NodeLeft   = nullptr;
+        tree->nodesArrayPtr[st].NodeRight  = nullptr;
+        tree->nodesArrayPtr[st].Parent     = nullptr;
 
         tree->nodesArrayPtr[st].expression = lexer.tokens[st];
     }
     
     LexerGraphicDump(tree);
 
-    MathNode* node = ParseAddSubOperations(&parser);
+    TreeNode* node = ParseAddSubOperations(&parser);
     
     MathLexerDestructor(&lexer);
 
@@ -144,18 +144,18 @@ static MathParserError ParseMathTree(const Text* text, MathTree* tree)
 
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\\
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\\
-///                                Рекурсивный спуск
+///                                Р РµРєСѓСЂСЃРёРІРЅС‹Р№ СЃРїСѓСЃРє
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\\
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\\
 
 
-static MathNode* ParseParenthesis(MathParser* parser)
+static TreeNode* ParseParenthesis(MathParser* parser)
 {
     assert(parser);
 
-    MathNode* curNode   = parser->nodes + parser->nodeIndex;
-    MathNode* nextNode  = parser->nodes + parser->nodeIndex + 1;
-    MathNode* rightNode = nullptr;
+    TreeNode* curNode   = parser->nodes + parser->nodeIndex;
+    TreeNode* nextNode  = parser->nodes + parser->nodeIndex + 1;
+    TreeNode* rightNode = nullptr;
 
     if (!curNode)
     {
@@ -204,13 +204,13 @@ static MathNode* ParseParenthesis(MathParser* parser)
     return nullptr;
 }
 
-static MathNode* ParseFunction(MathParser* parser)
+static TreeNode* ParseFunction(MathParser* parser)
 {
     assert(parser);
     
-    MathNode* curNode   = parser->nodes + parser->nodeIndex;
-    MathNode* nextNode  = parser->nodes + parser->nodeIndex + 1;
-    MathNode* rightNode = nullptr;
+    TreeNode* curNode   = parser->nodes + parser->nodeIndex;
+    TreeNode* nextNode  = parser->nodes + parser->nodeIndex + 1;
+    TreeNode* rightNode = nullptr;
 
     if (curNode && curNode->expression.type != ME_FUNCTION)
         return nullptr;
@@ -254,13 +254,13 @@ static MathNode* ParseFunction(MathParser* parser)
     return curNode;
 }
 
-static MathNode* ParseAddSubOperations(MathParser* parser)
+static TreeNode* ParseAddSubOperations(MathParser* parser)
 {
     assert(parser);
 
-    MathExpression expr  = {};
-    MathNode* leftNode   = nullptr;
-    MathNode* parentNode = nullptr;
+    GrammarToken expr  = {};
+    TreeNode* leftNode   = nullptr;
+    TreeNode* parentNode = nullptr;
 
     bool oper = false;
 
@@ -268,7 +268,7 @@ static MathNode* ParseAddSubOperations(MathParser* parser)
     {
         oper = false;
 
-        MathNode* rightNode = ParseMulDivOperations(parser);
+        TreeNode* rightNode = ParseMulDivOperations(parser);
 
         if (!rightNode || parser->status != MP_NO_ERRORS)
             return nullptr;
@@ -301,13 +301,13 @@ static MathNode* ParseAddSubOperations(MathParser* parser)
     return leftNode;
 }
 
-static MathNode* ParseMulDivOperations(MathParser* parser)
+static TreeNode* ParseMulDivOperations(MathParser* parser)
 {
     assert(parser);
 
-    MathExpression expr  = {};
-    MathNode* leftNode   = nullptr;
-    MathNode* parentNode = nullptr;
+    GrammarToken expr  = {};
+    TreeNode* leftNode   = nullptr;
+    TreeNode* parentNode = nullptr;
     
     bool oper = false;
 
@@ -315,7 +315,7 @@ static MathNode* ParseMulDivOperations(MathParser* parser)
     {
         oper = false;
 
-        MathNode* rightNode = ParsePowerOperation(parser);
+        TreeNode* rightNode = ParsePowerOperation(parser);
 
         if (!rightNode || parser->status != MP_NO_ERRORS)
             return nullptr;
@@ -348,13 +348,13 @@ static MathNode* ParseMulDivOperations(MathParser* parser)
     return leftNode;
 }
 
-static MathNode* ParsePowerOperation(MathParser* parser)
+static TreeNode* ParsePowerOperation(MathParser* parser)
 {        
     assert(parser);
 
-    MathExpression expr  = {};
-    MathNode* leftNode   = nullptr;
-    MathNode* parentNode = nullptr;
+    GrammarToken expr  = {};
+    TreeNode* leftNode   = nullptr;
+    TreeNode* parentNode = nullptr;
     
     bool oper = false;
 
@@ -362,7 +362,7 @@ static MathNode* ParsePowerOperation(MathParser* parser)
     {
         oper = false;
 
-        MathNode* rightNode = ParseParenthesis(parser);
+        TreeNode* rightNode = ParseParenthesis(parser);
 
         if (!rightNode || parser->status != MP_NO_ERRORS)
             return nullptr;
@@ -394,13 +394,13 @@ static MathNode* ParsePowerOperation(MathParser* parser)
     return leftNode;
 }
 
-static MathNode* ParseUnaryMinus(MathParser* parser)
+static TreeNode* ParseUnaryMinus(MathParser* parser)
 {
     assert(parser);
 
     assert(parser->nodeIndex < parser->nodesSize);
 
-    MathNode* curNode = parser->nodes + parser->nodeIndex;
+    TreeNode* curNode = parser->nodes + parser->nodeIndex;
 
     if (curNode->expression.type == ME_OPERATOR)
     {
@@ -414,13 +414,13 @@ static MathNode* ParseUnaryMinus(MathParser* parser)
 
         switch (curNode->expression.me_operator)
         {
-            case ME_ADDITION: // Унарный плюс
+            case ME_ADDITION: // РЈРЅР°СЂРЅС‹Р№ РїР»СЋСЃ
                 return ParseParenthesis(parser);
                 break;
-            case ME_SUBTRACTION: // Унарный минус
-                MathNode* node = ParseParenthesis(parser);
+            case ME_SUBTRACTION: // РЈРЅР°СЂРЅС‹Р№ РјРёРЅСѓСЃ
+                TreeNode* node = ParseParenthesis(parser);
 
-                // Дописать
+                // Р”РѕРїРёСЃР°С‚СЊ
                 break;
         }
     }

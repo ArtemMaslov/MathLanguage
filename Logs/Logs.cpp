@@ -39,12 +39,12 @@ int LogsConstructor()
 
     int status = LOG_NO_ERRORS;
 
-    status |= LogConstructor(LOGS_FOLDER "log_general.html",    "Общий лог программы.",               LOG_SIG_GENERAL);
+    status |= LogConstructor(LOGS_FOLDER "log_general.html",    "РћР±С‰РёР№ Р»РѕРі РїСЂРѕРіСЂР°РјРјС‹.",               LOG_SIG_GENERAL);
 
-    status |= LogConstructor(LOGS_FOLDER "log_parser.html",     "Лог работы парсера.",                LOG_SIG_PARSER);
-    status |= LogConstructor(LOGS_FOLDER "log_compiler.html",   "Лог работы компилятора.",            LOG_SIG_COMPILER);
-    status |= LogConstructor(LOGS_FOLDER "log_stack.html",      "Лог работы стека.",                  LOG_SIG_STACK);
-    status |= LogConstructor(LOGS_FOLDER "log_math.html",       "Лог работы математического дерева.", LOG_SIG_MATH_TREE);
+    status |= LogConstructor(LOGS_FOLDER "log_parser.html",     "Р›РѕРі СЂР°Р±РѕС‚С‹ РїР°СЂСЃРµСЂР°.",                LOG_SIG_PARSER);
+    status |= LogConstructor(LOGS_FOLDER "log_compiler.html",   "Р›РѕРі СЂР°Р±РѕС‚С‹ РєРѕРјРїРёР»СЏС‚РѕСЂР°.",            LOG_SIG_COMPILER);
+    status |= LogConstructor(LOGS_FOLDER "log_stack.html",      "Р›РѕРі СЂР°Р±РѕС‚С‹ СЃС‚РµРєР°.",                  LOG_SIG_STACK);
+    status |= LogConstructor(LOGS_FOLDER "log_math.html",       "Р›РѕРі СЂР°Р±РѕС‚С‹ РјР°С‚РµРјР°С‚РёС‡РµСЃРєРѕРіРѕ РґРµСЂРµРІР°.", LOG_SIG_MATH_TREE);
 
     atexit(LogsDestructor);
 
@@ -66,7 +66,7 @@ static int LogConstructor(const char* logFileName, const char* caption, const Lo
     if (!file)
     {
         LogLine("", LOG_LVL_ERROR, LOG_SIG_GENERAL, false);
-        printf("Ошибка открытия файла с логами. FileName = \"%s\"", logFileName);
+        printf("РћС€РёР±РєР° РѕС‚РєСЂС‹С‚РёСЏ С„Р°Р№Р»Р° СЃ Р»РѕРіР°РјРё. FileName = \"%s\"", logFileName);
         return LOG_ERR_FILE_OPENING;
     }
     
@@ -111,7 +111,7 @@ static int LogConstructor(const char* logFileName, const char* caption, const Lo
 }
 
 /**
- * @brief      Закрывает файлы логов.
+ * @brief      Р—Р°РєСЂС‹РІР°РµС‚ С„Р°Р№Р»С‹ Р»РѕРіРѕРІ.
 */
 void LogsDestructor()
 {
@@ -127,10 +127,10 @@ void LogsDestructor()
 }
 
 /**
- * @brief                    Добавляет строку в файл логов.
- * @param file               Указатель на поток вывода.
- * @param message            Строка, которую необходимо добавить.
- * @param dublicateToConsole Если true, то дублирует сообщения в консоль. По умолчанию false
+ * @brief                    Р”РѕР±Р°РІР»СЏРµС‚ СЃС‚СЂРѕРєСѓ РІ С„Р°Р№Р» Р»РѕРіРѕРІ.
+ * @param file               РЈРєР°Р·Р°С‚РµР»СЊ РЅР° РїРѕС‚РѕРє РІС‹РІРѕРґР°.
+ * @param message            РЎС‚СЂРѕРєР°, РєРѕС‚РѕСЂСѓСЋ РЅРµРѕР±С…РѕРґРёРјРѕ РґРѕР±Р°РІРёС‚СЊ.
+ * @param dublicateToConsole Р•СЃР»Рё true, С‚Рѕ РґСѓР±Р»РёСЂСѓРµС‚ СЃРѕРѕР±С‰РµРЅРёСЏ РІ РєРѕРЅСЃРѕР»СЊ. РџРѕ СѓРјРѕР»С‡Р°РЅРёСЋ false
 */
 void $LogLine__(const char* message, LogLevel logLevel, const LogSignature sig, bool dublicateToConsole,
                 const char* funcName, const char* fileName, int logLine)
@@ -298,14 +298,14 @@ void $LogFLine__(LogLevel logLevel, const LogSignature sig, bool dublicateToCons
 //    FILE* file = fopen(GRAPH_LOG_FOLDER "GraphicLog.html", "w");
 //    if (!file)
 //    {
-//        puts("Ошибка открытия файла.");
+//        puts("РћС€РёР±РєР° РѕС‚РєСЂС‹С‚РёСЏ С„Р°Р№Р»Р°.");
 //        return;
 //    }
 //
 //    const char* pattern = "<html>\n"
-//                          "<head><title>Лог программы \"Дифференциатор\".</title><style>font{line - height: 0.8; } body{background - color: #404040; } head{background - color: #404040; }</style></head>\n"
+//                          "<head><title>Р›РѕРі РїСЂРѕРіСЂР°РјРјС‹ \"Р”РёС„С„РµСЂРµРЅС†РёР°С‚РѕСЂ\".</title><style>font{line - height: 0.8; } body{background - color: #404040; } head{background - color: #404040; }</style></head>\n"
 //                          "<body>\n"
-//                          "<h1><font color = \"99B333\">Лог программы \"Дифференциатор\".</font></h1>\n";
+//                          "<h1><font color = \"99B333\">Р›РѕРі РїСЂРѕРіСЂР°РјРјС‹ \"Р”РёС„С„РµСЂРµРЅС†РёР°С‚РѕСЂ\".</font></h1>\n";
 //
 //    const char* ending  = "</body>\n</html>";
 //

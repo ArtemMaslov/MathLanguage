@@ -6,7 +6,7 @@
 
 struct MathLexer
 {
-    MathExpression* tokens;
+    GrammarToken* tokens;
     size_t tokenIndex;
     size_t tokensCapacity;
 };
@@ -25,11 +25,11 @@ int  MathLexerConstructor(MathLexer* parser, const Text* text);
 
 void MathLexerDestructor(MathLexer* parser);
 
-int  AddToken(MathLexer* parser, const MathExpression* expression);
+int  AddToken(MathLexer* parser, const GrammarToken* expression);
 
 #ifdef GRAPHVIZ
 
-void LexerGraphicDump(MathTree* tree);
+void LexerGraphicDump(LanguageTree* tree);
 
 #else
 

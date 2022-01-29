@@ -78,7 +78,7 @@ void* StackPop(Stack *stack, int *error)
 
     if (stack->stackSize == 0)
     {
-        LOG_STACK_ERR("Ïîïûòêà èçâëå÷ü ýëåìåíò èç ïóñòîãî ñòåêà.");
+        LOG_STACK_ERR("ÐŸÐ¾Ð¿Ñ‹Ñ‚ÐºÐ° Ð¸Ð·Ð²Ð»ÐµÑ‡ÑŒ ÑÐ»ÐµÐ¼ÐµÐ½Ñ‚ Ð¸Ð· Ð¿ÑƒÑÑ‚Ð¾Ð³Ð¾ ÑÑ‚ÐµÐºÐ°.");
         if (error)
             *error |= STK_ERR_EMPTY;
         return nullptr;
@@ -167,7 +167,7 @@ static size_t CalculateDecreasedCapacity(const size_t oldCapacity, const size_t 
 
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\\
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\\
-//                               Ôóíêöèè äèàãíîñòèêè
+//                               Ð¤ÑƒÐ½ÐºÑ†Ð¸Ð¸ Ð´Ð¸Ð°Ð³Ð½Ð¾ÑÑ‚Ð¸ÐºÐ¸
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\\
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\\
 
@@ -198,8 +198,8 @@ void $StackDump__(Stack *stack, FILE *file,
 
     if (stack)
     {
-        const int leftOffset1 = 4 - 1;// ÷èñëî ïðîáåëîâ, çàäàþùèõ îòñòóï ñëåâà. 4 ïðîáåëà
-        const int leftOffset2 = 8 - 1;// ÷èñëî ïðîáåëîâ, çàäàþùèõ îòñòóï ñëåâà. 8 ïðîáåëîâ
+        const int leftOffset1 = 4 - 1;// Ñ‡Ð¸ÑÐ»Ð¾ Ð¿Ñ€Ð¾Ð±ÐµÐ»Ð¾Ð², Ð·Ð°Ð´Ð°ÑŽÑ‰Ð¸Ñ… Ð¾Ñ‚ÑÑ‚ÑƒÐ¿ ÑÐ»ÐµÐ²Ð°. 4 Ð¿Ñ€Ð¾Ð±ÐµÐ»Ð°
+        const int leftOffset2 = 8 - 1;// Ñ‡Ð¸ÑÐ»Ð¾ Ð¿Ñ€Ð¾Ð±ÐµÐ»Ð¾Ð², Ð·Ð°Ð´Ð°ÑŽÑ‰Ð¸Ñ… Ð¾Ñ‚ÑÑ‚ÑƒÐ¿ ÑÐ»ÐµÐ²Ð°. 8 Ð¿Ñ€Ð¾Ð±ÐµÐ»Ð¾Ð²
         
         snprintf(buffer, bufferSize, 
             "%*s elementSize   = %zd\n"
@@ -217,17 +217,10 @@ void $StackDump__(Stack *stack, FILE *file,
             size_t size     = stack->stackSize;
             int    *data    = (int*)stack->data;
 
-            size_t numberLength = 0;
-            while (capacity > 0)
-            {
-                capacity /= 10;
-                numberLength++;
-            }
-            capacity = stack->stackCapacity;
 
             for (size_t st = 0; st < capacity; st++)
             {
-                snprintf(buffer, bufferSize, "%*s %c[%*.1d] = %d\n", leftOffset2, "", (st <= size) ? '*' : ' ', numberLength, st, data[st]);
+                snprintf(buffer, bufferSize, "%*s %c[%zd] = %d\n", leftOffset2, "", (st <= size) ? '*' : ' ', st, data[st]);
                 fputs(buffer, file);
             }
         }

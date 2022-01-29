@@ -28,3 +28,6 @@
 #undef POW
 #undef POW2
 #undef NEW_NODE
+#undef CHECK_NODE
+#undef CHANGE_NODE
+#undef CLEAR_NODE

@@ -74,7 +74,7 @@ static int GetTokens(MathLexer* lexer, const Text* text)
         if (*ptr == '\0')
             break;
 
-        // Операторы
+        // РћРїРµСЂР°С‚РѕСЂС‹
         for (size_t st = 0; !parsed && st < sizeof(MathOperatorNames) / sizeof(MathOperatorNames[0]); st++)
         {
             if (*ptr == MathOperatorNames[st])
@@ -91,7 +91,7 @@ static int GetTokens(MathLexer* lexer, const Text* text)
             }
         }
         
-        // Числа
+        // Р§РёСЃР»Р°
         parsedCount = 0;
         if (!parsed && sscanf(ptr, "%lf%n", &expr.me_number, &parsedCount))
         {
@@ -104,7 +104,7 @@ static int GetTokens(MathLexer* lexer, const Text* text)
             parsed = true;
         }
 
-        // Константы
+        // РљРѕРЅСЃС‚Р°РЅС‚С‹
         for (size_t st = 0; !parsed && st < sizeof(MathConstantNames) / sizeof(MathConstantNames[0]); st++)
         {
             if (CompareStrings(ptr, MathConstantNames[st]))
@@ -121,7 +121,7 @@ static int GetTokens(MathLexer* lexer, const Text* text)
             }
         }
 
-        // Функции
+        // Р¤СѓРЅРєС†РёРё
         for (size_t st = 0; !parsed && st < sizeof(MathFunctionNames) / sizeof(MathFunctionNames[0]); st++)
         {
             if (CompareStrings(ptr, MathFunctionNames[st]))
@@ -138,8 +138,8 @@ static int GetTokens(MathLexer* lexer, const Text* text)
             }
         }
 
-        // Переменные
-        // Разделителем переменных являются математические операторы
+        // РџРµСЂРµРјРµРЅРЅС‹Рµ
+        // Р Р°Р·РґРµР»РёС‚РµР»РµРј РїРµСЂРµРјРµРЅРЅС‹С… СЏРІР»СЏСЋС‚СЃСЏ РјР°С‚РµРјР°С‚РёС‡РµСЃРєРёРµ РѕРїРµСЂР°С‚РѕСЂС‹
         char* variableStart = ptr;
         bool  stopSymbol = false;
         while (!parsed && *ptr && !stopSymbol)
@@ -176,10 +176,10 @@ static int GetTokens(MathLexer* lexer, const Text* text)
             parsed = true;
         }
 
-        // Обработка синтаксической ошибки
+        // РћР±СЂР°Р±РѕС‚РєР° СЃРёРЅС‚Р°РєСЃРёС‡РµСЃРєРѕР№ РѕС€РёР±РєРё
         if (!parsed)
         {
-            LOG_MATH_TREE_ERR("Синтаксическая ошибка во входной строке.");
+            LOG_MATH_TREE_ERR("РЎРёРЅС‚Р°РєСЃРёС‡РµСЃРєР°СЏ РѕС€РёР±РєР° РІРѕ РІС…РѕРґРЅРѕР№ СЃС‚СЂРѕРєРµ.");
             status = TOKEN_ERR_SYNTAX;
             break;
         }
@@ -227,7 +227,7 @@ static int AllocTokens(MathLexer* lexer, const size_t size)
     MathExpression* arr = (MathExpression*)realloc(lexer->tokens, sizeof(MathExpression) * size);
     if (!arr)
     {
-        LOG_MATH_TREE_ERR("Не хватает памяти");
+        LOG_MATH_TREE_ERR("РќРµ С…РІР°С‚Р°РµС‚ РїР°РјСЏС‚Рё");
         return TOKEN_ERR_MEMORY;
     }
 
@@ -257,8 +257,8 @@ static bool CheckCorrectInput(const Text* text)
 
         if (lBracketsCount < rBracketsCount)
         {
-            LOG_CALC_ERR("Ошибочная скобочная последовательность.\n"
-                         "Количество закрывающих скобок '{' больше количества открывающих '}'");
+            LOG_CALC_ERR("РћС€РёР±РѕС‡РЅР°СЏ СЃРєРѕР±РѕС‡РЅР°СЏ РїРѕСЃР»РµРґРѕРІР°С‚РµР»СЊРЅРѕСЃС‚СЊ.\n"
+                         "РљРѕР»РёС‡РµСЃС‚РІРѕ Р·Р°РєСЂС‹РІР°СЋС‰РёС… СЃРєРѕР±РѕРє '{' Р±РѕР»СЊС€Рµ РєРѕР»РёС‡РµСЃС‚РІР° РѕС‚РєСЂС‹РІР°СЋС‰РёС… '}'");
             return false;
         }
 
@@ -283,7 +283,7 @@ void LexerGraphicDump(MathTree* tree)
 
     if (!file)
     {
-        LOG_MATH_TREE_ERR("CreateTreeGraph: ошибка открытия файла.");
+        LOG_MATH_TREE_ERR("CreateTreeGraph: РѕС€РёР±РєР° РѕС‚РєСЂС‹С‚РёСЏ С„Р°Р№Р»Р°.");
         return;
     }
 
