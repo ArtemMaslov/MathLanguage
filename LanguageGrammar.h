@@ -204,6 +204,8 @@ struct Expression
         SpecialSymbols         SpecSymbol;
 
         LanguageConstructions  Construction;
+
+        int                    EnumValue;
     };
     ExpressionTypes Type;
 };
@@ -225,8 +227,6 @@ struct GrammarToken
 {
     /// Значение лексемы в перечислениях.
     int             TokenCode;
-    /// Тип лексемы.
-    ExpressionTypes TokenType;
     /// Тип грамматики (Общая, русская, английская).
     GrammarType     GrammarType;
     /// Название лексемы
@@ -235,35 +235,30 @@ struct GrammarToken
     size_t          TokenSize;
 };
 
-struct $GrammarInfo_S_
+struct GrammarTokensClass
 {
-    size_t          GrammarTokensLength;
-    size_t          VariableSeparatorsLength;
-
-    size_t          ConstantTokensIndex;
-    size_t          ConstantTokensLength;
-
-    size_t          MathOperatorsIndex;
-    size_t          MathOperatorsLength;
-
-    size_t          FuncOperatorsIndex;
-    size_t          FuncOperatorsLength;
-    
-    size_t          SpecSymbolsIndex;
-    size_t          SpecSymbolsLength;
-    
-    size_t          LangConstructionsIndex;
-    size_t          LangConstructionsLength;
-
-    size_t          StdFunctionsIndex;
-    size_t          StdFunctionsLength;
+    /// Количество лексем
+    const size_t          TokensLength;
+    /// Тип лексемы.
+    const ExpressionTypes TokensType;
+    /// Массив лексем
+    GrammarToken* const   Tokens;
 };
 
-extern GrammarToken GrammarTokens[];
+// Всего восемь типов выражений ExpressionTypes. Но массивов стандартных лексем 6, так как числа и идентификаторы не имеют массивов.
+const size_t GrammarTokensTypesCount = 6;
+
+extern GrammarTokensClass* GrammarTokens[];
+
+extern GrammarTokensClass  GrammarStandartFunctionsClass;
+extern GrammarTokensClass  GrammarFunctionalOperatorsClass;
+extern GrammarTokensClass  GrammarLanguageConstructionsClass;
+extern GrammarTokensClass  GrammarConstantsClass;
+extern GrammarTokensClass  GrammarSpecSymbolsClass;
+extern GrammarTokensClass  GrammarMathOperatorsClass;
 
 extern char VariableSeparators[];
-
-extern $GrammarInfo_S_ GrammarInfo;
+extern const size_t VariableSeparatorsLength;
 
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\\
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\\
@@ -274,7 +269,7 @@ void ExpressionDestructor(Expression* expr);
 
 void PrintExpression(const Expression* expr, FILE* file);
 
-int FindGrammarToken(const Expression* expr, const GrammarType grammarType);
+GrammarToken* FindGrammarToken(const Expression* expr, const GrammarType grammarType);
 
 bool ExpressionsEqual(Expression* expr1, Expression* expr2);
 

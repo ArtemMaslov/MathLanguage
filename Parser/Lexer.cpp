@@ -75,25 +75,29 @@ static int GetTokens(LanguageLexer* lexer, const Text* text)
             break;
 
         // Математические операторы
-        for (size_t st = 0; !parsed && st < GrammarInfo.GrammarTokensLength; st++)
+        for (size_t grammarTypeIndex = 0; !parsed && grammarTypeIndex < GrammarTokensTypesCount; grammarTypeIndex++)
         {
-            if (!strncmp(ptr, GrammarTokens[st].TokenName, GrammarTokens[st].TokenSize))
+            GrammarToken* tokens       = GrammarTokens[grammarTypeIndex]->Tokens;
+            size_t        tokensLength = GrammarTokens[grammarTypeIndex]->TokensLength;
+
+            for (size_t grammarIndex = 0; grammarIndex < tokensLength; grammarIndex++)
             {
-                expr.Type = GrammarTokens[st].TokenType;
+                if (!strncmp(ptr, tokens[grammarIndex].TokenName, tokens[grammarIndex].TokenSize))
+                {
+                    expr.Type = GrammarTokens[grammarTypeIndex]->TokensType;
 
-                memcpy(&expr.Constant, &GrammarTokens[st].TokenCode, sizeof(GrammarTokens[st].TokenCode));
+                    memcpy(&expr.Constant, &tokens[grammarIndex].TokenCode, sizeof(tokens[grammarIndex].TokenCode));
 
-                if ((status = AddToken(lexer, &expr)) != LXR_NO_ERRORS)
-                    return status;
+                    if ((status = AddToken(lexer, &expr)) != LXR_NO_ERRORS)
+                        return status;
 
-                ptr+= GrammarTokens[st].TokenSize;
-                parsed = true;
-                break;
+                    ptr   += tokens[grammarIndex].TokenSize;
+                    parsed = true;
+                    break;
+                }
             }
         }
 
-        // Специальные символы
-        
         // Числа
         parsedCount = 0;
         if (!parsed && sscanf(ptr, "%lf%n", &expr.Number, &parsedCount))
@@ -117,7 +121,7 @@ static int GetTokens(LanguageLexer* lexer, const Text* text)
         bool  stopSymbol = false;
         while (!parsed && *ptr && !stopSymbol)
         {
-            for (size_t st = 0; st < GrammarInfo.VariableSeparatorsLength; st++)
+            for (size_t st = 0; st < VariableSeparatorsLength; st++)
             {
                 if (*ptr == VariableSeparators[st])
                 {
