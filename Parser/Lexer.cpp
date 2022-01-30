@@ -316,6 +316,28 @@ static int CheckIdentifierForKeywords(Expression* expr, size_t identifierSize)
     return status;
 }
 
+static int CheckForStrings(char** ptr)
+{
+    assert(ptr);
+    assert(*ptr);
+
+    int status = LXR_NO_ERRORS;
+
+    if (**ptr != '\"')
+        return status;
+
+    (*ptr)++;
+    
+    char* stringStart = *ptr;
+
+    while (**ptr != '\"')
+    {
+
+        (*ptr)++;
+    }
+
+    return status;
+}
 
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\\
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\\
