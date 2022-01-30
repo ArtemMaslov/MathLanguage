@@ -1,4 +1,3 @@
-﻿  Lexer.cpp
-  UnitTests.cpp
-  Generating Code...
+﻿  StringsUtf8.cpp
+D:\Язык C\MathLanguage\StringLibrary\StringsUtf8.cpp(201,16): warning C4552: '<<': result of expression not used
   MathLanguage.vcxproj -> D:\Язык C\MathLanguage\Debug\MathLanguage.exe

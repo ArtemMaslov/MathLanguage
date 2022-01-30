@@ -7,6 +7,7 @@
 
 #include "..\Logs\Logs.h"
 #include "..\MyStdLib.h"
+#include "..\StringLibrary\StringsUtf8.h"
 #include "Lexer.h"
 
 
@@ -15,6 +16,8 @@ static int AllocTokens(LanguageLexer* lexer, size_t size);
 static int GetTokens(LanguageLexer* lexer, const Text* text);
 
 static bool CheckCorrectParenthesis(const Text* text);
+
+static int CheckIdentifierForKeywords(Expression* expr, size_t identifierSize);
 
 static bool SkipComments(char** buf);
 
@@ -74,11 +77,22 @@ static int GetTokens(LanguageLexer* lexer, const Text* text)
         if (!SkipComments(&ptr))
             break;
 
-        // Математические операторы
+        // Константы.
+        // Языковые конструкции.
+        // Математические операторы.
+        // Специальные символы.
         for (size_t grammarTypeIndex = 0; !parsed && grammarTypeIndex < GrammarTokensTypesCount; grammarTypeIndex++)
         {
-            GrammarToken* tokens       = GrammarTokens[grammarTypeIndex]->Tokens;
-            size_t        tokensLength = GrammarTokens[grammarTypeIndex]->TokensLength;
+            GrammarToken*   tokens       = GrammarTokens[grammarTypeIndex]->Tokens;
+            size_t          tokensLength = GrammarTokens[grammarTypeIndex]->TokensLength;
+            ExpressionTypes tokensType   = GrammarTokens[grammarTypeIndex]->TokensType;
+
+            // Пропускаем обработку встроенных функций и функциональных операторов, так как они обрабатываются вместе с идентификаторами.
+            if ( !(tokensType == ML_TYPE_CONSTANT || 
+                   tokensType == ML_TYPE_LANG_CSTR ||
+                   tokensType == ML_TYPE_MATH_OPERATOR ||
+                   tokensType == ML_TYPE_SPECIAL_SYMBOL))
+                continue;
 
             for (size_t grammarIndex = 0; grammarIndex < tokensLength; grammarIndex++)
             {
@@ -114,9 +128,10 @@ static int GetTokens(LanguageLexer* lexer, const Text* text)
 
             parsed = true;
         }
-
-        // Переменные
-        // Разделителем переменных являются математические операторы
+        
+        // Идентификаторы.
+        // Встроенные функции.
+        // Функциональные операторы.
         char* variableStart = ptr;
         bool  stopSymbol = false;
         while (!parsed && *ptr && !stopSymbol)
@@ -146,6 +161,10 @@ static int GetTokens(LanguageLexer* lexer, const Text* text)
 
             expr.Identifier = variable;
             expr.Type = ML_TYPE_IDENTIFIER;
+            
+            // Обработка встроенных функций и функциональных операторов.
+            if ((status = CheckIdentifierForKeywords(&expr, varSize + 1)) != LXR_NO_ERRORS)
+                return status;
             
             if ((status = AddToken(lexer, &expr)) != LXR_NO_ERRORS)
                 return status;
@@ -255,12 +274,48 @@ static bool SkipComments(char** buf)
  *             При первом анализе ключевые слова считаются идентификаторами. Данная функция анализирует идентификаторы и распознаёт в них ключевые слова.
  * @param expr 
 */
-static void CheckIdentifierForKeywords(Expression* expr)
+static int CheckIdentifierForKeywords(Expression* expr, size_t identifierSize)
 {
     assert(expr);
+    
+    int   status   = LXR_NO_ERRORS;
 
+    char* variable = (char*)calloc(identifierSize, sizeof(char));
+    
+    if (!variable)
+        return LXR_ERR_MEMORY;
 
+    memcpy(variable, expr->Identifier, identifierSize);
+
+    Utf8ToLower(variable);
+
+    for (size_t grammarTypeIndex = 0; grammarTypeIndex < GrammarTokensTypesCount; grammarTypeIndex++)
+    {
+        GrammarToken*   tokens       = GrammarTokens[grammarTypeIndex]->Tokens;
+        size_t          tokensLength = GrammarTokens[grammarTypeIndex]->TokensLength;
+        ExpressionTypes tokensType   = GrammarTokens[grammarTypeIndex]->TokensType;
+
+        // обрабатываем встроенные функции и функциональные операторы.
+        if ( !(tokensType == ML_TYPE_FUNC_OPERATOR || 
+               tokensType == ML_TYPE_STD_FUNCTION))
+            continue;
+
+        for (size_t grammarIndex = 0; grammarIndex < tokensLength; grammarIndex++)
+        {
+            if (!strncmp(variable, tokens[grammarIndex].TokenName, tokens[grammarIndex].TokenSize))
+            {
+                expr->Type = GrammarTokens[grammarTypeIndex]->TokensType;
+
+                memcpy(&expr->Constant, &tokens[grammarIndex].TokenCode, sizeof(tokens[grammarIndex].TokenCode));
+
+                return status;
+            }
+        }
+    }
+
+    return status;
 }
+
 
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\\
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\\

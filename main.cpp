@@ -11,7 +11,6 @@
 
 //#pragma execution_character_set( "utf-8" )
 
-
 int main(int argc, char* argv[])
 {
     //SetConsoleCP(CP_UTF8);
