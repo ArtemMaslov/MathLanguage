@@ -27,6 +27,9 @@
     <Filter Include="Tree">
       <UniqueIdentifier>{2c13b70f-68cb-4b65-999b-a359bebc9664}</UniqueIdentifier>
     </Filter>
+    <Filter Include="MyArray">
+      <UniqueIdentifier>{f3886295-3247-4f4d-adb3-f284dd594ec3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\StringLibrary\StringLibrary.cpp">
@@ -111,6 +114,15 @@
     </ClInclude>
     <ClInclude Include="..\StringLibrary\StringsUtf8.h">
       <Filter>StringLibrary</Filter>
+    </ClInclude>
+    <ClInclude Include="..\MyArray\MyArray.inc">
+      <Filter>MyArray</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Parser\ParserDefines.h">
+      <Filter>Parser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Parser\ParserUndef.h">
+      <Filter>Parser</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

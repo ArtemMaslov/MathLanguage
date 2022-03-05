@@ -13,23 +13,24 @@
 
 static int AllocTokens(LanguageLexer* lexer, size_t size);
 
-static int GetTokens(LanguageLexer* lexer, const Text* text);
-
 static bool CheckCorrectParenthesis(const Text* text);
 
 static int CheckIdentifierForKeywords(Expression* expr, size_t identifierSize);
 
 static bool SkipComments(char** buf);
 
+static int AddToken(LanguageLexer* lexer, const Expression* expression);
+
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\\
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\\
 
-int LexerConstructor(LanguageLexer* lexer, const Text* text)
+int LexerConstructor(LanguageLexer* lexer)
 {
     assert(lexer);
-    assert(text);
 
     int status = LXR_NO_ERRORS;
+
+    // assert(lexer->Tokens);
 
     if ((status = AllocTokens(lexer, TokenMinSize)) != LXR_NO_ERRORS)
         return status;
@@ -39,10 +40,21 @@ int LexerConstructor(LanguageLexer* lexer, const Text* text)
     //if (!CheckCorrectParenthesis(text))
     //    return LXR_ERR_SYNTAX;
 
-    if ((status = GetTokens(lexer, text)) != LXR_NO_ERRORS)
-        return status;
+    //if ((status = GetTokens(lexer, text)) != LXR_NO_ERRORS)
+    //    return status;
 
     return status;
+}
+
+/**
+ * @brief       Очищает лексический анализатор для анализа нового файла.
+ * @param lexer Указатель на лексический анализатор.
+*/
+void LexerClear(LanguageLexer* lexer)
+{
+    assert(lexer);
+
+    lexer->TokenIndex = 0;
 }
 
 void LexerDestructor(LanguageLexer* lexer)
@@ -56,15 +68,14 @@ void LexerDestructor(LanguageLexer* lexer)
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\\
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\\
 
-static int GetTokens(LanguageLexer* lexer, const Text* text)
+int LexerGetTokens(LanguageLexer* lexer, const Text* text)
 {
     assert(lexer);
-    assert(text);
 
     int status = LXR_NO_ERRORS;
     
     int parsedCount = 0;
-    char* ptr  = text->buffer;
+    char* ptr       = text->buffer;
     Expression expr = {};
 
     while (*ptr)
@@ -96,7 +107,7 @@ static int GetTokens(LanguageLexer* lexer, const Text* text)
 
             for (size_t grammarIndex = 0; grammarIndex < tokensLength; grammarIndex++)
             {
-                if (!strncmp(ptr, tokens[grammarIndex].TokenName, tokens[grammarIndex].TokenSize))
+                if (!strncmp(ptr, tokens[grammarIndex].TokenName, tokens[grammarIndex].TokenNameSize + 1))
                 {
                     expr.Type = GrammarTokens[grammarTypeIndex]->TokensType;
 
@@ -105,7 +116,7 @@ static int GetTokens(LanguageLexer* lexer, const Text* text)
                     if ((status = AddToken(lexer, &expr)) != LXR_NO_ERRORS)
                         return status;
 
-                    ptr   += tokens[grammarIndex].TokenSize;
+                    ptr   += tokens[grammarIndex].TokenNameSize;
                     parsed = true;
                     break;
                 }
@@ -181,13 +192,15 @@ static int GetTokens(LanguageLexer* lexer, const Text* text)
         }
     }
 
+    lexer->TokensCount = lexer->TokenIndex;
+
     return status;
 }
 
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\\
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\\
 
-int AddToken(LanguageLexer* lexer, const Expression* expression)
+static int AddToken(LanguageLexer* lexer, const Expression* expression)
 {
     assert(lexer);
     assert(expression);
@@ -302,7 +315,7 @@ static int CheckIdentifierForKeywords(Expression* expr, size_t identifierSize)
 
         for (size_t grammarIndex = 0; grammarIndex < tokensLength; grammarIndex++)
         {
-            if (!strncmp(variable, tokens[grammarIndex].TokenName, tokens[grammarIndex].TokenSize))
+            if (!strncmp(variable, tokens[grammarIndex].TokenName, tokens[grammarIndex].TokenNameSize + 1))
             {
                 expr->Type = GrammarTokens[grammarTypeIndex]->TokensType;
 
@@ -365,9 +378,9 @@ void LexerGraphicDump(Tree* tree)
           "    bgcolor=\"lightblue\"\n"
           "    node [fontcolor=gray11, style=filled, fontsize = 18];\n", file);
 
-    for (size_t st = 0; st < tree->nodesArraySize; st++)
+    for (size_t st = 0; st < tree->NodesArrayCurSize; st++)
     {
-        CreateNodeGraph(file, &tree->nodesArrayPtr[st], 0, true);
+        CreateNodeGraph(file, &tree->NodesArrayPtr[st], 0, true);
     }
 
     fputs("}", file);

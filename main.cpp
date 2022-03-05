@@ -25,7 +25,7 @@ int main(int argc, char* argv[])
 
     ConfigGrammarTokens();
 
-    LexerUnitTests();
+    ParserUnitTests();
 
     LogsDestructor();
 }

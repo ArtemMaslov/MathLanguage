@@ -11,21 +11,137 @@
 #include "Logs\Logs.h"
 
 
-#define CLEAR_MEMORY goto clear_memory
+#define CLEAR_MEMORY       goto clear_memory
 #define CLEAR_MEMORY_POINT clear_memory
+#define CODE_DIRECTORY     "Programs\\Simple syntax"
+
+const size_t bufferSize = 1000;
+
+static void __unitTests(void (*testFunction)(FILE * file));
+
+static void __lexerTestFunction(FILE* file);
+
+static void __parserTestFunction(FILE * file);
+
 
 void LexerUnitTests()
 {
+    __unitTests(__lexerTestFunction);
+}
+
+void ParserUnitTests()
+{
+    __unitTests(__parserTestFunction);
+}
+
+static void __parserTestFunction(FILE* file)
+{
+    LanguageLexer lexer = {};
+    Text text = {};
+
+    if (!ReadFile(&text, file))
+    {
+        fprintf(stderr, "Ошибка чтения файла.\n");
+
+        CLEAR_MEMORY;
+    }
+
+    if (LexerConstructor(&lexer) == LXR_NO_ERRORS &&
+        LexerGetTokens(&lexer, &text) == LXR_NO_ERRORS)
+    {
+        //fputs("Тест пройден.\n", stdout);
+        Tree tree = {};
+
+        if (!tree.NodesArrayPtr)
+        {
+            LOG_CALC_ERR("Ошибка выделения памяти");
+
+            CLEAR_MEMORY;
+        }
+
+        LexerGraphicDump(&tree);
+
+        TreeDestructor(&tree);
+    }
+    else
+    {
+        fprintf(stderr, "Ошибка лексера. Подробнее смотри в дебагере :(\n");
+
+        CLEAR_MEMORY;
+    }
+
+CLEAR_MEMORY_POINT:
+
+    TextDestructor(&text);
+    LexerDestructor(&lexer);
+}
+
+static void __lexerTestFunction(FILE* file)
+{
+    LanguageLexer lexer = {};
+    Text text = {};
+
+    if (!ReadFile(&text, file))
+    {
+        fprintf(stderr, "Ошибка чтения файла.\n");
+
+        CLEAR_MEMORY;
+    }
+
+    if (LexerConstructor(&lexer) == LXR_NO_ERRORS &&
+        LexerGetTokens(&lexer, &text) == LXR_NO_ERRORS)
+    {
+        fputs("Тест пройден.\n", stdout);
+
+        Tree tree = {};
+
+        tree.NodesArrayPtr = (TreeNode*)calloc(lexer.TokenIndex, sizeof(TreeNode));
+        tree.NodesArrayCurSize = lexer.TokenIndex;
+
+        if (!tree.NodesArrayPtr)
+        {
+            LOG_CALC_ERR("Ошибка выделения памяти");
+
+            CLEAR_MEMORY;
+        }
+
+        for (size_t st = 0; st < lexer.TokenIndex; st++)
+        {
+            tree.NodesArrayPtr[st].ChildCount = 0;
+
+            tree.NodesArrayPtr[st].NodeLeft = nullptr;
+            tree.NodesArrayPtr[st].NodeRight = nullptr;
+            tree.NodesArrayPtr[st].Parent = nullptr;
+
+            tree.NodesArrayPtr[st].Value = lexer.Tokens[st];
+        }
+
+        LexerGraphicDump(&tree);
+
+        TreeDestructor(&tree);
+    }
+    else
+    {
+        fprintf(stderr, "Ошибка лексера. Подробнее смотри в дебагере :(\n");
+
+        CLEAR_MEMORY;
+    }
+
+CLEAR_MEMORY_POINT:
+
+    TextDestructor(&text);
+    LexerDestructor(&lexer);
+}
+
+static void __unitTests(void (*testFunction)(FILE* file))
+{
     WIN32_FIND_DATA fileData = {};
-    HANDLE handle = FindFirstFile(L"..\\Programs\\*.math", &fileData);
+    HANDLE handle = FindFirstFile(L"..\\" CODE_DIRECTORY "\\*.math", &fileData);
 
     if (handle != INVALID_HANDLE_VALUE)
     {
-        LanguageLexer lexer = {};
-        Text text = {};
-        const size_t bufferSize = 1000;
-        wchar_t filePath[bufferSize] = L"";
         char    fileName[bufferSize] = "";
+        wchar_t filePath[bufferSize] = L"";
         FILE* file = nullptr;
 
         do
@@ -36,10 +152,10 @@ void LexerUnitTests()
 
                 CLEAR_MEMORY;
             }
-            
-            fprintf(stdout, "Тестирование лексера на файле: \"%s\"\n", fileName);
 
-            swprintf(filePath, bufferSize, L"..\\Programs\\%s", fileData.cFileName);
+            fprintf(stdout, "Тестирование функции на файле: \"%s\"\n", fileName);
+
+            swprintf(filePath, bufferSize, L"..\\" CODE_DIRECTORY "\\%s", fileData.cFileName);
 
             file = _wfopen(filePath, L"r");
 
@@ -50,60 +166,13 @@ void LexerUnitTests()
                 CLEAR_MEMORY;
             }
 
-            if (!ReadFile(&text, file))
-            {
-                fprintf(stderr, "Ошибка чтения файла \"%s\".\n", fileName);
+            testFunction(file);
 
-                CLEAR_MEMORY;
-            }
+            CLEAR_MEMORY_POINT:
 
-            if (LexerConstructor(&lexer, &text) != LXR_NO_ERRORS)
-            {
-                fprintf(stderr, "Ошибка лексера. Файл: \"%s\".\n", fileName);
-
-                CLEAR_MEMORY;
-            }
-            else
-            {
-                fputs("Тест пройден.\n", stdout);
-
-                Tree tree = {};
-
-                tree.nodesArrayPtr  = (TreeNode*)calloc(lexer.TokenIndex, sizeof(TreeNode));
-                tree.nodesArraySize = lexer.TokenIndex;
-
-                if (!tree.nodesArrayPtr)
-                {
-                    LOG_CALC_ERR("Ошибка выделения памяти");
-
-                    CLEAR_MEMORY;
-                }
-
-                for (size_t st = 0; st < lexer.TokenIndex; st++)
-                {
-                    tree.nodesArrayPtr[st].ChildCount = 0;
-                        
-                    tree.nodesArrayPtr[st].NodeLeft   = nullptr;
-                    tree.nodesArrayPtr[st].NodeRight  = nullptr;
-                    tree.nodesArrayPtr[st].Parent     = nullptr;
-                        
-                    tree.nodesArrayPtr[st].Value = lexer.Tokens[st];
-                }
-
-                LexerGraphicDump(&tree);
-
-                TreeDestructor(&tree);
-            }
-
-        CLEAR_MEMORY_POINT:
-
-            TextDestructor(&text);
-            LexerDestructor(&lexer);
-
-            fputs("Нажмите любую клавишу, чтобы перейти к следующему файлу.\n", stdout);
+            fputs("\nНажмите любую клавишу, чтобы перейти к следующему файлу.\n", stdout);
             fgetc(stdin);
-        }
-        while (FindNextFile(handle, &fileData));
+        } while (FindNextFile(handle, &fileData));
 
         FindClose(handle);
     }

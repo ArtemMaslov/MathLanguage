@@ -1,3 +1,13 @@
-﻿  StringsUtf8.cpp
-D:\Язык C\MathLanguage\StringLibrary\StringsUtf8.cpp(201,16): warning C4552: '<<': result of expression not used
-  MathLanguage.vcxproj -> D:\Язык C\MathLanguage\Debug\MathLanguage.exe
+﻿  LanguageGrammar.cpp
+  main.cpp
+  LanguageTree.cpp
+  Tree.cpp
+D:\Язык C\MathLanguage\Math\Tree.h(14,40): warning C4244: '*=': conversion from 'double' to 'size_t', possible loss of data
+  Lexer.cpp
+  Parser.cpp
+D:\Язык C\MathLanguage\Parser\Parser.cpp(115,31): error C3861: 'ParseBlock': identifier not found
+D:\Язык C\MathLanguage\Parser\Parser.cpp(136,42): error C2440: '=': cannot convert from 'void' to 'char *'
+D:\Язык C\MathLanguage\Parser\Parser.cpp(136,29): message : Expressions of type void cannot be converted to other types
+D:\Язык C\MathLanguage\Parser\Parser.cpp(274,92): warning C4244: 'argument': conversion from 'double' to 'size_t', possible loss of data
+  UnitTests.cpp
+  Generating Code...

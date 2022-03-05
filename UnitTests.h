@@ -4,5 +4,7 @@
 
 void LexerUnitTests();
 
+void ParserUnitTests();
+
 
 #endif

@@ -87,6 +87,5 @@
         node->ChildCount = child->ChildCount;                   \
         node->NodeLeft = left;                                  \
         node->NodeRight = right;                                \
-        node->Allocated = child->Allocated;                     \
         result = true;                                          \
     }

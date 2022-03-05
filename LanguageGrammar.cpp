@@ -144,7 +144,8 @@ GrammarToken GrammarLanguageConstructionsTokens[] =
 ///                                     Русский.
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\\
 
-    { ML_CSTR_PROGRAM_START,    GRAMMAR_RU, "начало программы"},
+    { ML_CSTR_PROGRAM_START,    GRAMMAR_RU, "начало программы", "ProgStart"},
+    { ML_CSTR,                  GRAMMAR_ALL, nullptr,           "CSTR"},
 
     { ML_CSTR_FROM,             GRAMMAR_RU, "от"},
     { ML_CSTR_TO,               GRAMMAR_RU, "до"},
@@ -399,6 +400,10 @@ const size_t VariableSeparatorsLength = sizeof(VariableSeparators) / sizeof(Vari
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\\
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\\
 
+/**
+ * @brief Заполняет данными массив информации о токенах для дальнейшего использования.
+ * 
+*/
 void ConfigGrammarTokens()
 {
     for (size_t grammarTypeIndex = 0; grammarTypeIndex < GrammarTokensTypesCount; grammarTypeIndex++)
@@ -408,7 +413,10 @@ void ConfigGrammarTokens()
 
         for (size_t tokenIndex = 0; tokenIndex < tokensCount; tokenIndex++)
         {
-            tokens[tokenIndex].TokenSize = strlen(tokens[tokenIndex].TokenName);
+            if (tokens[tokenIndex].TokenName)
+                tokens[tokenIndex].TokenNameSize = strlen(tokens[tokenIndex].TokenName);
+            if (tokens[tokenIndex].TreeName)
+                tokens[tokenIndex].TreeNameSize  = strlen(tokens[tokenIndex].TreeName);
         }
     }
 }
@@ -484,6 +492,25 @@ GrammarToken* FindGrammarToken(const Expression* expr, const GrammarType grammar
             }
 
             break;
+        }
+    }
+
+    assert(!"Лексема из такой грамматики не найдена");
+
+    return nullptr;
+}
+
+GrammarToken* FindConstructionToken(const LanguageConstructions cstr, const GrammarType grammarType)
+{
+    GrammarToken* tokens       = GrammarLanguageConstructionsClass.Tokens;
+    size_t        tokensLength = GrammarLanguageConstructionsClass.TokensLength;
+
+    for (size_t tokenIndex = 0; tokenIndex < tokensLength; tokenIndex++)
+    {
+        if (tokens[tokenIndex].TokenCode == cstr &&
+           (tokens[tokenIndex].GrammarType & grammarType) > 0)
+        {
+            return tokens + tokenIndex;
         }
     }
 

@@ -27,7 +27,7 @@ double TreeCalculate(const Tree* problem)
 
     assert(problem);
 
-    return CalculateNode(problem->root, problem, nullptr);
+    return CalculateNode(problem->Root, problem, nullptr);
 }
 
 static double CalculateNode(const TreeNode* node, const Tree* problem, bool* canCalculate)

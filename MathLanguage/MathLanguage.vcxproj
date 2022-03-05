@@ -31,6 +31,8 @@
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
+    <EnableASAN>true</EnableASAN>
+    <EnableFuzzer>true</EnableFuzzer>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -166,9 +168,14 @@
     <ClInclude Include="..\Math\LanguageTree.h" />
     <ClInclude Include="..\Math\Tree.h" />
     <ClInclude Include="..\Math\UndefMathDSL.h" />
+    <ClInclude Include="..\MyArray\MyArray.inc">
+      <FileType>Document</FileType>
+    </ClInclude>
     <ClInclude Include="..\MyStdLib.h" />
     <ClInclude Include="..\Parser\Lexer.h" />
     <ClInclude Include="..\Parser\Parser.h" />
+    <ClInclude Include="..\Parser\ParserDefines.h" />
+    <ClInclude Include="..\Parser\ParserUndef.h" />
     <ClInclude Include="..\StackLibrary\StackDiagnostic.h" />
     <ClInclude Include="..\StackLibrary\StackLite.h" />
     <ClInclude Include="..\StringLibrary\StringLibrary.h" />

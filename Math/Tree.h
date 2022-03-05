@@ -11,6 +11,9 @@
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\\
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\\
 
+const double NodesArrayCapacityScale = 1.5;
+const size_t MinNodesArraySize       = 100;
+
 typedef Expression TreeValue;
 
 struct TreeNode
@@ -25,19 +28,19 @@ struct TreeNode
     TreeNode* NodeRight;
     /// Количество потомков у поддерева.
     size_t    ChildCount;
-    /// Если true, то память для узла была выделена отдельно и нужно вызвать TreeNodeDestructor.
-    bool      Allocated;
 };
 
 struct Tree
 {
     /// Корень дерева.
-    TreeNode* root;
+    TreeNode* Root;
 
-    /// Указатель на начало массива узлов, если allocatedSeparately == false.
-    TreeNode* nodesArrayPtr;
+    /// Указатель на начало массива узлов
+    TreeNode* NodesArrayPtr;
     /// Размер массива
-    size_t nodesArraySize;
+    size_t    NodesArrayCurSize;
+    /// Максимальное количество элементов в массиве до увелечения памяти.
+    size_t    NodesArrayCapacity;
 };
 
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\\
@@ -45,7 +48,7 @@ struct Tree
 
 bool TreeConstructor(Tree* programm);
 
-TreeNode* TreeNodeConstructor(const TreeValue* expression);
+TreeNode* TreeNodeConstructor(Tree* tree, const TreeValue* value);
 
 bool TreeDestructor(Tree* programm);
 
@@ -60,7 +63,7 @@ void TreeAddLeftNode(TreeNode* Parent, TreeNode* child);
 
 size_t TreeMeasure(TreeNode* node);
 
-TreeNode* TreeCopyRecursive(const TreeNode* nodeSrc);
+TreeNode* TreeCopyRecursive(Tree* tree, const TreeNode* nodeSrc);
 
 bool IsLeaf(const TreeNode* node);
 

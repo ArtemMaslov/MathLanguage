@@ -99,6 +99,8 @@ enum LanguageConstructions
                                      
     ML_CSTR_BLOCK_START    = 4,      // Начало блока кода.
     ML_CSTR_BLOCK_END      = 5,      // Конец блока кода.
+
+    ML_CSTR                = 6,
                                      
     ML_CSTR_ARRAY_DEF      = 20,     // Определение массива.
     ML_CSTR_STRING         = 21,     // Определение строки-литерала. Пример: "это строка".
@@ -106,6 +108,7 @@ enum LanguageConstructions
     ML_CSTR_FROM           = 31,     // "от". Начальное инициализатор цикла "для всех".
     ML_CSTR_TO             = 32,     // "до". Конечное значение цикла "для всех".
     ML_CSTR_STEP           = 33,     // "по". Шаг цикла "для всех".
+
 
 };
 
@@ -231,8 +234,12 @@ struct GrammarToken
     GrammarType     GrammarType;
     /// Название лексемы
     const char*     TokenName;
-    /// TokenSize == strlen(TokenName); Длина строки названия лексемы.
-    size_t          TokenSize;
+    /// Имя лексемы, используемое в дереве
+    const char*     TreeName;
+    /// TokenNameSize == strlen(TokenName); Длина строки имени лексемы.
+    size_t          TokenNameSize;
+    /// TreeNameSize  == strlen(TreeName);  Длина строки имени лексемы.
+    size_t          TreeNameSize;
 };
 
 struct GrammarTokensClass
@@ -270,6 +277,8 @@ void ExpressionDestructor(Expression* expr);
 void PrintExpression(const Expression* expr, FILE* file);
 
 GrammarToken* FindGrammarToken(const Expression* expr, const GrammarType grammarType);
+
+GrammarToken* FindConstructionToken(const LanguageConstructions cstr, const GrammarType grammarType);
 
 bool ExpressionsEqual(Expression* expr1, Expression* expr2);
 

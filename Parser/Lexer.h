@@ -9,8 +9,9 @@
 struct LanguageLexer
 {
     Expression* Tokens;
-    size_t TokenIndex;
-    size_t TokensCapacity;
+    size_t      TokenIndex;
+    size_t      TokensCount;
+    size_t      TokensCapacity;
 };
 
 enum LexerErrors
@@ -23,11 +24,13 @@ enum LexerErrors
 const size_t TokenMinSize = 100;
 const double TokenScale = 2;
 
-int  LexerConstructor(LanguageLexer* lexer, const Text* text);
+int LexerConstructor(LanguageLexer* lexer);
 
 void LexerDestructor(LanguageLexer* lexer);
 
-int AddToken(LanguageLexer* lexer, const Expression* expression);
+int LexerGetTokens(LanguageLexer* lexer, const Text* text);
+
+void LexerClear(LanguageLexer* lexer);
 
 #ifdef GRAPHVIZ
 

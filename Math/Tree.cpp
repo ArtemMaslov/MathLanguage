@@ -11,13 +11,11 @@
 #include "..\Logs\Logs.h"
 
 
-static bool TreeNodeFindVariables(const TreeNode* node, Tree* tree);
-
 static double CalculateNode(const TreeNode* node, const Tree* tree, bool* canCalculate);
 
-static bool TreeAddVariable(Tree* tree, const char* variable);
-
 static void OptimizeNodeToNumber(TreeNode* node, const double number);
+
+static bool TreeAllocNodes(Tree* tree);
 
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\\
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\\
@@ -31,36 +29,42 @@ bool TreeConstructor(Tree* tree)
 
     assert(tree);
 
-    tree->root                = nullptr;
+    tree->Root               = nullptr;
     
-    tree->nodesArrayPtr       = nullptr;
-    tree->nodesArraySize      = 0;
+    tree->NodesArrayPtr      = (TreeNode*)calloc(MinNodesArraySize, sizeof(TreeNode));
 
-    return true;
+    // #log
+
+    if (!tree->NodesArrayPtr)
+        return false; // #err
+
+    tree->NodesArrayCapacity = MinNodesArraySize;
+    tree->NodesArrayCurSize  = 0;
+
+    return true; // #err
 }
 
-TreeNode* TreeNodeConstructor(const TreeValue* value)
+TreeNode* TreeNodeConstructor(Tree* tree, const TreeValue* value)
 {
     LOG_TREE_DBG("Вызван TreeNodeConstructor()");
 
+    assert(tree);
     //assert(expression);
 
-    TreeNode* node = (TreeNode*)calloc(1, sizeof(TreeNode));
+    if (tree->NodesArrayCurSize >= tree->NodesArrayCapacity)
+        if (!TreeAllocNodes(tree))
+            return nullptr;
 
-    if (!node)
-    {
-        LOG_TREE_ERR("NodeConstructor: не хватает памяти для создания нового узла");
-        return nullptr;
-    }
-
-    node->NodeLeft  = nullptr;
-    node->NodeRight = nullptr;
-    node->Allocated = true;
+    size_t index = tree->NodesArrayCurSize;
+    tree->NodesArrayPtr[index].NodeLeft  = nullptr;
+    tree->NodesArrayPtr[index].NodeRight = nullptr;
 
     if (value)
-        memcpy(&node->Value, value, sizeof(TreeValue));
+        memcpy(&tree->NodesArrayPtr[index].Value, value, sizeof(TreeValue));
 
-    return node;
+    tree->NodesArrayCurSize++;
+
+    return tree->NodesArrayPtr + index;
 }
 
 bool TreeDestructor(Tree* problem) 
@@ -71,11 +75,12 @@ bool TreeDestructor(Tree* problem)
     
     if (problem)
     {
-        for (size_t st = 0; st < problem->nodesArraySize; st++)
+        for (size_t st = 0; st < problem->NodesArrayCurSize; st++)
         {
-            ExpressionDestructor(&problem->nodesArrayPtr[st].Value);
+            ExpressionDestructor(&problem->NodesArrayPtr[st].Value);
         }
-        free(problem->nodesArrayPtr);
+        TreeNodeDestructor(problem->Root);
+        free(problem->NodesArrayPtr);
     }
 
     return true;
@@ -87,18 +92,36 @@ bool TreeNodeDestructor(TreeNode* node)
 
     // assert(node);
 
-    if (node && node->Allocated)
+    if (node)
     {
         if (node->NodeLeft)
             TreeNodeDestructor(node->NodeLeft);
         if (node->NodeRight)
             TreeNodeDestructor(node->NodeRight);
-        free(node);
     }
 
     return true;
 }
 
+static bool TreeAllocNodes(Tree* tree)
+{
+    assert(tree);
+
+    assert(tree->NodesArrayCurSize >= tree->NodesArrayCapacity); // Проверяем на лишние не правильные вызовы
+
+    TreeNode* nodes = (TreeNode*)realloc(tree->NodesArrayPtr, (size_t)(tree->NodesArrayCapacity * NodesArrayCapacityScale) * sizeof(TreeNode));
+
+    if (!nodes)
+    {
+        // #log
+        return false; // #err
+    }
+
+    tree->NodesArrayPtr = nodes;
+    tree->NodesArrayCapacity *= NodesArrayCapacityScale;
+
+    return true;
+}
 
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\\
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\\
@@ -146,13 +169,13 @@ size_t TreeMeasure(TreeNode* node)
  * @param nodeParentDst Указатель, куда надо скопировать дерево.
  * @return              false в случае ошибки, true в случае успеха.
 */
-TreeNode* TreeCopyRecursive(const TreeNode* nodeSrc)
+TreeNode* TreeCopyRecursive(Tree* tree, const TreeNode* nodeSrc)
 {
     LOG_TREE_DBG("TreeCopyRecursive");
 
     assert(nodeSrc);
 
-    TreeNode* node = TreeNodeConstructor(&nodeSrc->Value);
+    TreeNode* node = TreeNodeConstructor(tree, &nodeSrc->Value);
 
     if (!(node))
     {
@@ -162,7 +185,7 @@ TreeNode* TreeCopyRecursive(const TreeNode* nodeSrc)
     
     if (nodeSrc->NodeLeft)
     {
-        node->NodeLeft = TreeCopyRecursive(nodeSrc->NodeLeft);
+        node->NodeLeft = TreeCopyRecursive(tree, nodeSrc->NodeLeft);
         
         if (!(node->NodeLeft))
         {
@@ -175,7 +198,7 @@ TreeNode* TreeCopyRecursive(const TreeNode* nodeSrc)
     
     if (nodeSrc->NodeRight)
     {
-        node->NodeRight = TreeCopyRecursive(nodeSrc->NodeRight);
+        node->NodeRight = TreeCopyRecursive(tree, nodeSrc->NodeRight);
         
         if (!(node->NodeRight))
         {
